@@ -1,0 +1,83 @@
+---
+swagger: "2.0"
+info:
+  description: "This is a simple API"
+  version: "1.0.0"
+  title: "Simple Inventory API"
+  contact:
+    email: "you@your-company.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "virtserver.swaggerhub.com"
+basePath: "/teamkat/hnpredictor/1.0.0"
+tags:
+- name: "admins"
+  description: "Secured Admin-only calls"
+- name: "developers"
+  description: "Operations available to regular developers"
+schemes:
+- "https"
+paths:
+  /articles:
+    get:
+      tags:
+      - "developers"
+      summary: "returns suggested articles from list"
+      description: "By passing in the current front page articles, you can get the\
+        \ suggested articles based on your history\n"
+      operationId: "suggest_articles"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "recommended results from list"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Article"
+        400:
+          description: "bad input parameter"
+      x-swagger-router-controller: "swagger_server.controllers.developers_controller"
+    post:
+      tags:
+      - "admins"
+      summary: "adds a chosen article"
+      description: "Adds an article to the system"
+      operationId: "add_article"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "article"
+        description: "Article to add"
+        required: false
+        schema:
+          $ref: "#/definitions/Article"
+      responses:
+        201:
+          description: "article added"
+        400:
+          description: "invalid input, object invalid"
+        409:
+          description: "an existing item already exists"
+      x-swagger-router-controller: "swagger_server.controllers.admins_controller"
+definitions:
+  Article:
+    type: "object"
+    required:
+    - "title"
+    - "url"
+    properties:
+      title:
+        type: "string"
+        example: "Show HN"
+      url:
+        type: "string"
+        example: "www.ycombinator/news"
+    example:
+      title: "Show HN"
+      url: "www.ycombinator/news"
